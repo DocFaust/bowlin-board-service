@@ -6,58 +6,81 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import de.docfaust.bb.controller.exception.HTTPInvalidScoreException;
-import de.docfaust.bb.dto.DTOScore;
-import de.docfaust.bb.dto.DTOScoreBoard;
 import de.docfaust.bb.model.exception.InvalidRollException;
 import de.docfaust.bb.service.RoundService;
 
+/**
+ * Spring Controllerclass. Entry Point to the Java world
+ * @author Werner Faust
+ *
+ */
 @Controller
 public class BowlingController {
+	/**
+	 * Logger.
+	 */
 	private Logger logger = LoggerFactory.getLogger(getClass());
 
+	/**
+	 * Instance of RoundService.
+	 */
 	@Autowired
 	private RoundService bowlingService;
 
-	@GetMapping("/")
-	public String getScoreBoard(@RequestParam(name="score") int score, Model model) throws HTTPInvalidScoreException {
+	/**
+	 * Route addRoll. This will add the given Roll score to the board.
+	 * @param score Number of fallen pins.
+	 * @param model Model to set the data for the UI
+	 * @return name of page to show;
+	 * @throws HTTPInvalidScoreException Thrown if it should be somehow possible to add unexpected data or invalid amount of pins.
+	 */
+	@GetMapping("/addroll")
+	public String addRoll(@RequestParam(name = "score") int score, Model model) throws HTTPInvalidScoreException {
+		logger.info("Adding Roll: " + score);
 		try {
 			bowlingService.addRoll(score);
 		} catch (InvalidRollException e) {
-			throw new HTTPInvalidScoreException(score);
+			model.addAttribute("message", e.getMessage());
 		}
 
-		DTOScoreBoard list = new DTOScoreBoard();
-		list.setFrames(bowlingService.getScoreBoard());
-		model.addAttribute("scoreboard", list.getFrames());
+		model.addAttribute("scoreboard", bowlingService.getScoreBoard());
+		model.addAttribute("progress", bowlingService.isGameInProgress());
 		return "index";
 	}
 
-//	@RequestMapping(value = "/scoreboard", method = RequestMethod.GET)
-//	public DTOScoreBoard getScoreBoard() {
-//		DTOScoreBoard list = new DTOScoreBoard();
-//		list.setFrames(bowlingService.getScoreBoard());
-//		return list;
-//	}
+	/**
+	 * Route / 
+	 * @param model Model to set the data for the UI
+	 * @return name of page to show;
+	 */
+	@GetMapping("/")
+	public String getScoreBoard(Model model) {
+		logger.info("Retrieving Scoreboard");
+		model.addAttribute("scoreboard", bowlingService.getScoreBoard());
+		model.addAttribute("progress", bowlingService.isGameInProgress());
+		return "index";
+	}
 
+
+	/**
+	 * Route /reset. Resets the Board.
+	 * @param model
+	 * @param model Model to set the data for the UI
+	 * @return name of page to show;
+	 * @return
+	 */
 	@RequestMapping(value = "/reset", method = RequestMethod.GET)
-	public void reset() {
+	public String reset(Model model) {
+		logger.info("Resetting Scoreboard");
 		bowlingService.initializeRounds();
-	}
-
-	@RequestMapping(value = "/scoreadd", method = RequestMethod.GET)
-	public String addScore(@RequestParam(name="score") DTOScore score, Model model) throws HTTPInvalidScoreException {
-		logger.info("Adding Score: " + score.getScore());
-		try {
-			bowlingService.addRoll(score.getScore());
-		} catch (InvalidRollException e) {
-			throw new HTTPInvalidScoreException(score.getScore());
-		}
+		model.addAttribute("scoreboard", bowlingService.getScoreBoard());
+		model.addAttribute("progress", bowlingService.isGameInProgress());
 		return "index";
 	}
+
 }

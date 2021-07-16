@@ -1,0 +1,67 @@
+.header {
+  padding-top: 1em;
+  padding-bottom: 2em;
+}
+
+.input {
+	width: 20em;
+}
+.score {
+  height: 5em;
+  padding: 1em 0 1em 0;
+}
+.message {
+  padding: 1em 0 1em 0;
+}
+.reset {
+  padding: 1em 0 1em 0;
+}
+.frame {
+  padding: 2px;
+  border: 1px solid;
+  background-color: chocolate;
+  width: fit-content;
+ float: left;
+}
+
+.number {
+  border: 1px solid;
+  background-color: coral;
+  text-align: center;
+  width: 3em;
+  height: fit-content;
+  margin-top: 0px;
+}
+
+.roll1 {
+  border: 1px solid;
+  float: left;
+  text-align: center;
+  background-color: coral;
+  width: 1.5em;
+  height: 1.5em;
+}
+
+.roll2 {
+  border: 1px solid;
+  float: left;
+  text-align: center;
+  background-color: coral;
+  width: 1.5em;
+  height: 1.5em;
+}
+.roll3 {
+  border: 1px solid;
+  float: left;
+  text-align: center;
+  background-color: coral;
+  width: 1.5em;
+  height: 1.5em;
+}
+
+.total {
+  border: 1px solid;
+  background-color: coral;
+  width: 3em;
+  text-align: center;
+}

@@ -1,5 +1,11 @@
 package de.docfaust.bb.model.exception;
 
+/**
+ * Collector of BowlingExceptions.
+ * 
+ * @author Werner Faust
+ *
+ */
 public class BowlingException extends Exception {
 	/**
 	 * 

@@ -3,10 +3,26 @@ package de.docfaust.bb.model;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * DTO Class for the UI
+ * @author Werner Faust
+ *
+ */
 public class ScoreFrame {
 
+	/**
+	 * Number of the Frame from 1 to 10;
+	 */
 	private int number;
+	
+	/**
+	 * Array of Rolls. 
+	 */
 	private List<String> rolls = new ArrayList<>();
+	
+	/**
+	 * Total score.
+	 */
 	private int totalScore;
 
 	public ScoreFrame(int number) {
@@ -37,6 +53,9 @@ public class ScoreFrame {
 		this.totalScore = totalScore;
 	}
 
+	/**
+	 * Logging purposes.
+	 */
 	@Override
 	public String toString() {
 		StringBuilder b = new StringBuilder("ScoreFrame: [");

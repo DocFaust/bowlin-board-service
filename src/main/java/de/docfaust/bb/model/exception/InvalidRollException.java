@@ -1,5 +1,10 @@
 package de.docfaust.bb.model.exception;
 
+/**
+ * Exception indicating an invalid entry.
+ * @author wfa339
+ *
+ */
 public class InvalidRollException extends BowlingException {
 	/**
 	 * 

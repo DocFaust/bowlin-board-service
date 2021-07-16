@@ -8,10 +8,10 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.ui.Model;
+import org.springframework.validation.support.BindingAwareModelMap;
 
 import de.docfaust.bb.controller.exception.HTTPInvalidScoreException;
-import de.docfaust.bb.dto.DTOScore;
-import de.docfaust.bb.dto.DTOScoreBoard;
 import de.docfaust.bb.model.ScoreFrame;
 
 @SpringBootTest
@@ -80,10 +80,11 @@ public class BowlingControllerTest {
 		
 		// F8
 		try {
-			controller.addScore(createScore(11));
-			fail("Should throw");
-		} catch (HTTPInvalidScoreException e) {
+			Model m = new BindingAwareModelMap();
+			controller.addRoll(11, m);
+			assertThat(m.getAttribute("message")).isNotNull().isEqualTo("Pins out of range: 11");
 			checkBoard(7, 0, "", "");
+		} catch (HTTPInvalidScoreException e) {
 			e.printStackTrace();
 		}
 
@@ -91,10 +92,11 @@ public class BowlingControllerTest {
 		checkBoard(7, 70, "6", "");
 		
 		try {
-			controller.addScore(createScore(6));
-			//fail("Should throw");
-		} catch (HTTPInvalidScoreException e) {
+			Model m = new BindingAwareModelMap();
+			controller.addRoll(6, m);
+			assertThat(m.getAttribute("message")).isNotNull().isEqualTo("Number of Pins bigger than 10");
 			checkBoard(7, 70, "6", "");
+		} catch (HTTPInvalidScoreException e) {
 			e.printStackTrace();
 		}
 		addScore(3); // Counts
@@ -117,9 +119,11 @@ public class BowlingControllerTest {
 	}
 
 	private void checkBoard(int frameNumber, int totalScore, String... roll) {
-		DTOScoreBoard scoreBoard = controller.getScoreBoard();
-		printScoreBoard(scoreBoard);
-		ScoreFrame frame = scoreBoard.getFrames().get(frameNumber);
+		Model m =new BindingAwareModelMap();
+		String ret = controller.getScoreBoard(m);
+		List<ScoreFrame> frames = (List<ScoreFrame>) m.getAttribute("scoreboard");
+		printScoreBoard(frames);
+		ScoreFrame frame =frames.get(frameNumber);
 		assertThat(frame.getTotalScore()).isEqualTo(totalScore);
 
 		List<String> rolls = frame.getRolls();
@@ -131,9 +135,8 @@ public class BowlingControllerTest {
 
 	}
 
-	private void printScoreBoard(DTOScoreBoard board) {
+	private void printScoreBoard(List<ScoreFrame> frames) {
 		System.out.println("--- Scoreboard ---");
-		List<ScoreFrame> frames = board.getFrames();
 		for (ScoreFrame frame : frames) {
 			System.out.println(frame.toString());
 		}
@@ -142,16 +145,11 @@ public class BowlingControllerTest {
 
 	private void addScore(int score) {
 		try {
-			controller.addScore(createScore(score));
+			controller.addRoll(score, new BindingAwareModelMap());
 		} catch (HTTPInvalidScoreException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
 
-	private DTOScore createScore(int score) {
-		DTOScore dto = new DTOScore();
-		dto.setScore(score);
-		return dto;
-	}
 }
