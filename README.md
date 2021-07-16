@@ -1,4 +1,4 @@
-# bowlin-board-service
+# bowling-board-service
 Implementation of a bowling scoreboard
 
 ## Start via Maven:
